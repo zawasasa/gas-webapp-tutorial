@@ -1,10 +1,12 @@
+
 import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import Content from './components/Content'; // Default content for home
 import Footer from './components/Footer';
 import Chapter1 from './pages/Chapter1';
-import Chapter2 from './pages/Chapter2'; // Import Chapter2
+import Chapter2 from './pages/Chapter2';
+import Chapter3 from './pages/Chapter3'; // Import Chapter3
 import './App.css';
 
 function App() {
@@ -25,8 +27,10 @@ function App() {
     switch (currentPath) {
       case '#chapter1':
         return <Chapter1 />;
-      case '#chapter2': // Add Chapter2 to routing
+      case '#chapter2':
         return <Chapter2 />;
+      case '#chapter3': // Add Chapter3 to routing
+        return <Chapter3 />;
       default:
         return <Content />;
     }
