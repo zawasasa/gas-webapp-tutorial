@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
@@ -8,7 +7,8 @@ import Chapter1 from './pages/Chapter1';
 import Chapter2 from './pages/Chapter2';
 import Chapter3 from './pages/Chapter3';
 import Chapter4 from './pages/Chapter4';
-import Chapter5 from './pages/Chapter5'; // Import Chapter5
+import Chapter5 from './pages/Chapter5';
+import Chapter6 from './pages/Chapter6'; // Import Chapter6
 import './App.css';
 
 function App() {
@@ -35,8 +35,10 @@ function App() {
         return <Chapter3 />;
       case '#chapter4':
         return <Chapter4 />;
-      case '#chapter5': // Add Chapter5 to routing
+      case '#chapter5':
         return <Chapter5 />;
+      case '#chapter6': // Add Chapter6 to routing
+        return <Chapter6 />;
       default:
         return <Content />;
     }
