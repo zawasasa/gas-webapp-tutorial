@@ -1,12 +1,52 @@
-# React + Vite
+# GASで作るWebアプリ開発入門
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Google Apps Script (GAS) を使ったWebアプリケーションの作り方を、初心者向けに分かりやすく解説するチュートリアルサイトです。
 
-Currently, two official plugins are available:
+## 📖 特徴
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **初心者にやさしい**: プログラミングが初めての方でも理解できる丁寧な解説
+- **実践的な内容**: 具体的なコード例とサンプルアプリケーション
+- **軽量**: 単一のHTMLファイルで完結（32KB）
+- **どこでも使える**: ブラウザがあればすぐに閲覧可能
 
-## Expanding the ESLint configuration
+## 🚀 使い方
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 1. ブラウザで直接開く
+```bash
+# ファイルをダブルクリックするか、ブラウザにドラッグ&ドロップ
+simple-index.html
+```
+
+### 2. Webサーバーでホスティング
+```bash
+# 任意のWebサーバーにアップロード
+# 例: GitHub Pages, Netlify, Apache, Nginx など
+```
+
+## 📚 学習内容
+
+1. **第1章**: はじめの一歩 - GASの基本と開発環境
+2. **第2章**: GASのキホン - スクリプトエディタとスプレッドシート操作
+3. **第3章**: はじめてのWebアプリ - 「Hello World」アプリの作成
+4. **第4章**: 見た目を整えよう - HTML & CSS
+5. **第5章**: データをやり取りする - フォームとサーバー通信
+6. **第6章**: 実践！アプリ開発 - アンケートフォームと出欠連絡フォーム
+7. **付録**: よくあるエラーと解決法、セキュリティの注意事項
+
+## 🎯 対象読者
+
+- プログラミング初心者
+- GASを使ったWebアプリ開発に興味がある方
+- 教育現場で簡単なWebアプリを作りたい方
+- サーバーレスでWebアプリを作りたい方
+
+## 💡 なぜGAS？
+
+- **無料**: Googleアカウントがあれば利用可能
+- **サーバー不要**: Google のサーバー上で動作
+- **簡単**: ブラウザだけで開発完結
+- **連携**: スプレッドシート、Gmail等との連携が簡単
+
+## 📄 ライセンス
+
+このチュートリアルは学習目的で自由にご利用いただけます。

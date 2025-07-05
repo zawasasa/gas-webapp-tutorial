@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GASで作るWebアプリ開発入門</title>
+    <style>
+        /* リセットCSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Hiragino Kaku Gothic ProN', 'メイリオ', sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        /* レイアウト */
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .header {
+            background-color: #4285f4;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .main-container {
+            display: flex;
+            flex: 1;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #f1f1f1;
+            padding: 1rem;
+            border-right: 1px solid #ddd;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 0.5rem 1rem;
+            text-decoration: none;
+            color: #333;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar a:hover {
+            background-color: #ddd;
+        }
+
+        .sidebar a.active {
+            background-color: #4285f4;
+            color: white;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            line-height: 1.6;
+        }
+
+        .content h2 {
+            color: #4285f4;
+            border-bottom: 2px solid #4285f4;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .content h3 {
+            color: #333;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .content h4 {
+            color: #666;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .content p {
+            margin-bottom: 1rem;
+        }
+
+        .content ul, .content ol {
+            padding-left: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .content li {
+            margin-bottom: 0.5rem;
+        }
+
+        .content pre {
+            background-color: #f5f5f5;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            border-left: 4px solid #4285f4;
+            margin-bottom: 1rem;
+        }
+
+        .content code {
+            background-color: #f5f5f5;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .content pre code {
+            background-color: transparent;
+            padding: 0;
+        }
+
+        .content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 1rem 0;
+        }
+
+        .content a {
+            color: #4285f4;
+            text-decoration: none;
+        }
+
+        .content a:hover {
+            text-decoration: underline;
+        }
+
+        .footer {
+            background-color: #333;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        /* レスポンシブデザイン */
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                order: 2;
+            }
+            
+            .content {
+                order: 1;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <h1>GASで作るWebアプリ開発入門</h1>
+        </header>
+        
+        <div class="main-container">
+            <aside class="sidebar">
+                <nav>
+                    <ul>
+                        <li><a href="#" onclick="showContent('home')" class="active">トップページ</a></li>
+                        <li><a href="#chapter1" onclick="showContent('chapter1')">第1章: はじめの一歩</a></li>
+                        <li><a href="#chapter2" onclick="showContent('chapter2')">第2章: GASのキホン</a></li>
+                        <li><a href="#chapter3" onclick="showContent('chapter3')">第3章: はじめてのWebアプリ</a></li>
+                        <li><a href="#chapter4" onclick="showContent('chapter4')">第4章: 見た目を整えよう</a></li>
+                        <li><a href="#chapter5" onclick="showContent('chapter5')">第5章: データをやり取りする</a></li>
+                        <li><a href="#chapter6" onclick="showContent('chapter6')">第6章: 実践！アプリ開発</a></li>
+                        <li><a href="#appendix" onclick="showContent('appendix')">付録</a></li>
+                    </ul>
+                </nav>
+            </aside>
+            
+            <main class="content" id="content">
+                <!-- コンテンツがここに動的に表示されます -->
+            </main>
+        </div>
+        
+        <footer class="footer">
+            <p>&copy; 2024 GASで作るWebアプリ開発入門</p>
+        </footer>
+    </div>
+
+    <script>
+        // コンテンツデータ
+        const contentData = {
+            home: {
+                title: 'サイトへようこそ！',
+                content: `
+                    <h2>サイトへようこそ！</h2>
+                    <p>このサイトでは、Google Apps Script (GAS) を使ったWebアプリケーションの作り方を、初心者向けに分かりやすく解説します。</p>
+                    <p>プログラミングが初めての方でも大丈夫。一緒に学んでいきましょう！</p>
+                `
+            },
+            
+            chapter1: {
+                title: '第1章: はじめの一歩',
+                content: `
+                    <h2>第1章: はじめの一歩</h2>
+                    <h3>GASで何ができる？</h3>
+                    <p>Google Apps Script (GAS) は、Googleが提供するJavaScriptベースのプログラミング言語です。Google Workspace（旧G Suite）の様々なサービス（Google スプレッドシート、Google ドキュメント、Google フォーム、Gmailなど）を連携させ、自動化したり、機能を拡張したりすることができます。</p>
+                    <p>例えば、以下のようなことができます。</p>
+                    <ul>
+                        <li>スプレッドシートのデータを自動で集計・分析する</li>
+                        <li>フォームの回答を自動で処理し、メールで通知する</li>
+                        <li>Gmailのメールを自動で振り分けたり、定型文を送信したりする</li>
+                        <li>Google ドキュメントを自動で生成する</li>
+                        <li>Webアプリケーションを作成し、外部からアクセスできるようにする</li>
+                    </ul>
+
+                    <h3>開発環境の準備</h3>
+                    <p>GASの開発には、特別なソフトウェアのインストールは不要です。Googleアカウントがあれば、すぐに開発を始めることができます。</p>
+                    <h4>1. Googleアカウントの準備</h4>
+                    <p>Googleアカウントをお持ちでない場合は、<a href="https://accounts.google.com/signup" target="_blank" rel="noopener noreferrer">こちら</a>から作成してください。</p>
+
+                    <h4>2. Google Driveの活用</h4>
+                    <p>GASのプロジェクトは、Google Drive上に保存されます。Google Driveを整理しておくことで、プロジェクトの管理がしやすくなります。</p>
+                    <p>新しいGASプロジェクトを作成するには、Google Driveから「新規」→「その他」→「Google Apps Script」を選択します。</p>
+                    <img src="https://via.placeholder.com/600x300?text=Google+Drive+New+GAS+Project" alt="Google Driveで新しいGASプロジェクトを作成する" />
+
+                    <p>これで、GASの開発を始める準備が整いました！</p>
+                `
+            },
+            
+            chapter2: {
+                title: '第2章: GASのキホン',
+                content: `
+                    <h2>第2章: GASのキホン</h2>
+                    <h3>スクリプトエディタの使い方</h3>
+                    <p>GASのコードを書く場所を「スクリプトエディタ」と呼びます。Google Driveから新しいGASプロジェクトを作成すると、自動的にスクリプトエディタが開きます。</p>
+                    <p>スクリプトエディタは、大きく分けて以下の部分で構成されています。</p>
+                    <ul>
+                        <li><strong>メニューバー:</strong> ファイルの保存、実行、デバッグなどの操作を行います。</li>
+                        <li><strong>ツールバー:</strong> よく使う機能へのショートカットがあります。</li>
+                        <li><strong>コードエディタ:</strong> 実際にGASのコードを記述する場所です。</li>
+                        <li><strong>ログ:</strong> コードの実行結果やエラーメッセージが表示されます。</li>
+                    </ul>
+                    <img src="https://via.placeholder.com/600x300?text=GAS+Script+Editor" alt="GASスクリプトエディタの画面" />
+
+                    <h3>スプレッドシートを操作してみよう</h3>
+                    <p>GASの最も一般的な使い方の1つは、Google スプレッドシートの操作です。ここでは、簡単な例として、スプレッドシートに文字を入力したり、セルの値を取得したりする方法を見ていきましょう。</p>
+
+                    <h4>1. スプレッドシートの準備</h4>
+                    <p>まず、新しいGoogle スプレッドシートを作成し、適当な名前を付けてください（例: <code>MyGASData</code>）。</p>
+
+                    <h4>2. コードの記述</h4>
+                    <p>スクリプトエディタに以下のコードを記述し、保存してください。</p>
+                    <pre><code>function writeToSheet() {
+  // スプレッドシートを名前で取得
+  const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  // シートを名前で取得
+  const sheet = spreadsheet.getSheetByName('シート1'); // シート名を適宜変更してください
+
+  // A1セルに「Hello, GAS!」と書き込む
+  sheet.getRange('A1').setValue('Hello, GAS!');
+
+  // B1セルの値を取得し、ログに出力
+  const cellValue = sheet.getRange('B1').getValue();
+  Logger.log('B1セルの値: ' + cellValue);
+}</code></pre>
+
+                    <h4>3. コードの実行</h4>
+                    <p>スクリプトエディタのメニューバーから「実行」ボタン（▶アイコン）をクリックし、「writeToSheet」関数を選択して実行します。</p>
+                    <p>初回実行時には、Googleアカウントへのアクセス許可を求められますので、指示に従って許可してください。</p>
+                    <p>実行後、スプレッドシートのA1セルに「Hello, GAS!」と表示され、スクリプトエディタのログにB1セルの値が表示されていれば成功です。</p>
+                `
+            },
+            
+            chapter3: {
+                title: '第3章: はじめてのWebアプリ',
+                content: `
+                    <h2>第3章: はじめてのWebアプリ</h2>
+                    <h3>「こんにちは世界！」と表示するだけの最も簡単なWebページ</h3>
+                    <p>GASを使ってWebアプリを作成する最初のステップとして、ブラウザに「こんにちは世界！」と表示するだけのシンプルなWebページを作成してみましょう。</p>
+
+                    <h4>1. GASプロジェクトの作成</h4>
+                    <p>Google Driveから新しいGASプロジェクトを作成します（第1章参照）。</p>
+
+                    <h4>2. コードの記述</h4>
+                    <p>スクリプトエディタに以下のコードを記述し、保存してください。</p>
+                    <pre><code>function doGet() {
+  // HTMLコンテンツを返す
+  return HtmlService.createHtmlOutput(\`
+    <!DOCTYPE html>
+    <html>
+    <body>
+      <h1>こんにちは世界！</h1>
+    </body>
+    </html>
+  \`);
+}</code></pre>
+                    <p>この <code>doGet()</code> 関数は、Webアプリにアクセスがあったときに実行される特別な関数です。<code>HtmlService.createHtmlOutput()</code> を使うことで、HTMLコンテンツをブラウザに表示することができます。</p>
+
+                    <h4>3. Webアプリとして公開</h4>
+                    <p>GASプロジェクトをWebアプリとして公開するには、以下の手順を実行します。</p>
+                    <ol>
+                        <li>スクリプトエディタのメニューバーから「デプロイ」→「新しいデプロイ」を選択します。</li>
+                        <li>「種類の選択」で「ウェブアプリ」を選択します。</li>
+                        <li>「説明」に任意の名前（例: <code>HelloWorldApp</code>）を入力します。</li>
+                        <li>「実行するユーザー」は「自分」を選択します。</li>
+                        <li>「アクセスできるユーザー」は「全員」を選択します（テスト用なので、公開しても問題ありません）。</li>
+                        <li>「デプロイ」ボタンをクリックします。</li>
+                    </ol>
+                    <img src="https://via.placeholder.com/600x300?text=GAS+Deploy+as+Web+App" alt="GASをWebアプリとしてデプロイする" />
+
+                    <h4>4. Webアプリの確認</h4>
+                    <p>デプロイが完了すると、WebアプリのURLが表示されます。このURLをブラウザで開くと、「こんにちは世界！」と表示されたWebページが表示されるはずです。</p>
+                    <p>これで、あなたのはじめてのWebアプリが完成しました！</p>
+                `
+            },
+            
+            chapter4: {
+                title: '第4章: 見た目を整えよう',
+                content: `
+                    <h2>第4章: 見た目を整えよう (HTML & CSS)</h2>
+                    <p>Webアプリの見た目を整えるには、HTMLとCSSを使います。HTMLはページの構造を作り、CSSは色や配置などのスタイルを定義します。</p>
+
+                    <h3>最低限知っておきたいHTMLタグ</h3>
+                    <p>Webページは、様々なHTMLタグを組み合わせて作られています。ここでは、特によく使う基本的なタグを紹介します。</p>
+                    <ul>
+                        <li><code>&lt;h1&gt;</code>〜<code>&lt;h6&gt;</code>: 見出し。数字が小さいほど大きな見出しになります。</li>
+                        <li><code>&lt;p&gt;</code>: 段落。文章を記述します。</li>
+                        <li><code>&lt;a&gt;</code>: リンク。他のページやサイトへ移動するためのリンクを作成します。</li>
+                        <li><code>&lt;img&gt;</code>: 画像。画像を挿入します。</li>
+                        <li><code>&lt;ul&gt;</code>, <code>&lt;ol&gt;</code>, <code>&lt;li&gt;</code>: リスト。箇条書きや番号付きリストを作成します。</li>
+                        <li><code>&lt;div&gt;</code>, <code>&lt;span&gt;</code>: 汎用的な要素。特定の意味を持たず、要素をグループ化したり、スタイルを適用したりするために使われます。</li>
+                    </ul>
+                    <p>これらのタグを組み合わせて、Webページの骨組みを作っていきます。</p>
+
+                    <h3>CSSで文字の色や大きさを変える方法</h3>
+                    <p>GASのWebアプリでCSSを使うには、HTMLファイルの中に直接スタイルを記述するか、別のCSSファイルを読み込む方法があります。ここでは、簡単な例として、HTMLファイルの中にスタイルを記述する方法を見てみましょう。</p>
+
+                    <h4>例: 文字の色と大きさを変える</h4>
+                    <p>以下のHTMLコードをGASの <code>doGet()</code> 関数で返すと、ブラウザで表示されたときに「Hello, World!」の文字が赤色で大きく表示されます。</p>
+                    <pre><code>function doGet() {
+  const htmlOutput = HtmlService.createHtmlOutput(\`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <base target="_top">
+      <style>
+        h1 {
+          color: red;
+          font-size: 36px;
+        }
+      </style>
+    </head>
+    <body>
+      <h1>Hello, World!</h1>
+    </body>
+    </html>
+  \`);
+  return htmlOutput;
+}</code></pre>
+
+                    <p><code>&lt;style&gt;</code>タグの中にCSSのルールを記述します。上記の例では、<code>h1</code>要素の文字色を赤（<code>color: red;</code>）に、文字サイズを36ピクセル（<code>font-size: 36px;</code>）に設定しています。</p>
+                    <p>CSSを学ぶことで、より魅力的で使いやすいWebアプリを作成できるようになります。</p>
+                `
+            },
+            
+            chapter5: {
+                title: '第5章: データをやり取りする',
+                content: `
+                    <h2>第5章: データをやり取りする</h2>
+                    <p>Webアプリの重要な機能の一つは、ユーザーからの入力を受け取ったり、サーバーからデータを取得したりすることです。GASのWebアプリでは、HTMLフォームとGASのスクリプトを連携させることで、データのやり取りを実現します。</p>
+
+                    <h3>フォームを作ってGASにデータを送る</h3>
+                    <p>ユーザーが入力したデータをGASに送信するには、HTMLの<code>&lt;form&gt;</code>タグを使用します。フォームのデータは、GASの <code>doPost()</code> 関数で受け取ることができます。</p>
+
+                    <h4>例: 名前を送信するフォーム</h4>
+                    <p>以下のコードは、名前を送信するフォームとその処理を行うGASコードです。</p>
+                    <pre><code>// フォームを表示するためのdoGet関数
+function doGet() {
+  const htmlOutput = HtmlService.createHtmlOutput(\`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <base target="_top">
+    </head>
+    <body>
+      <h1>名前を送信</h1>
+      <form method="post" action="<%= ScriptApp.getWebAppUrl() %>">
+        <label for="name">名前:</label>
+        <input type="text" id="name" name="userName" required><br><br>
+        <input type="submit" value="送信">
+      </form>
+    </body>
+    </html>
+  \`);
+  return htmlOutput;
+}
+
+// フォームの送信データを処理するためのdoPost関数
+function doPost(e) {
+  const userName = e.parameter.userName;
+  Logger.log('送信された名前: ' + userName);
+  return HtmlService.createHtmlOutput('<h1>こんにちは、' + userName + 'さん！</h1>');
+}
+
+// データをスプレッドシートに記録するためのdoPost関数（改良版）
+function doPost(e) {
+  const userName = e.parameter.userName;
+  const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = spreadsheet.getSheetByName('データ'); // データを記録するシート名
+
+  // 最終行に新しいデータを追加
+  sheet.appendRow([new Date(), userName]);
+
+  return HtmlService.createHtmlOutput('<h1>データを記録しました！</h1>');
+}</code></pre>
+                    <p><strong>ポイント:</strong></p>
+                    <ul>
+                        <li><code>&lt;form method="post" action="&lt;%= ScriptApp.getWebAppUrl() %&gt;"&gt;</code>: フォームの送信先を現在のWebアプリのURLに設定し、POSTメソッドでデータを送信します。</li>
+                        <li><code>name="userName"</code>: 入力フィールドに名前を付けることで、GAS側で <code>e.parameter.userName</code> として値を受け取ることができます。</li>
+                        <li><code>doPost(e)</code>: POSTメソッドでデータが送信されたときに実行される関数です。<code>e.parameter</code> オブジェクトにフォームの入力値が格納されています。</li>
+                    </ul>
+
+                    <h3>送られたデータをスプレッドシートに記録する</h3>
+                    <p>フォームから送信されたデータをスプレッドシートに記録することで、データの管理や集計が容易になります。上記のコードには、データをスプレッドシートに記録する方法も含まれています。</p>
+                    <p>このように、GASを使うことで、WebアプリとGoogleサービスを連携させ、データの入力・表示・保存を簡単に行うことができます。</p>
+                `
+            },
+            
+            chapter6: {
+                title: '第6章: 実践！アプリ開発',
+                content: `
+                    <h2>第6章: 実践！アプリ開発チュートリアル</h2>
+                    <p>これまでの章で学んだ知識を活かして、実際にWebアプリを作成してみましょう。ここでは、教育現場で役立つ2つの簡単なWebアプリの作成手順を解説します。</p>
+
+                    <h3>例1: 簡単なアンケートフォーム</h3>
+                    <p>生徒や保護者から簡単なアンケートを収集するためのWebフォームを作成します。回答はGoogle スプレッドシートに自動で記録されます。</p>
+
+                    <h4>1. スプレッドシートの準備</h4>
+                    <p>新しいGoogle スプレッドシートを作成し、シート名を「アンケート回答」とし、1行目に以下の見出しを入力しておきます。</p>
+                    <p><code>タイムスタンプ, 名前, 質問1の回答, 質問2の回答</code></p>
+
+                    <h4>2. GASコードの記述</h4>
+                    <p>スクリプトエディタに以下のコードを記述し、保存してください。</p>
+                    <pre><code>// 簡単なアンケートフォーム
+function doGet() {
+  const htmlOutput = HtmlService.createHtmlOutput(\`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <base target="_top">
+      <title>簡単アンケート</title>
+      <style>
+        body { font-family: sans-serif; margin: 20px; }
+        label { display: block; margin-bottom: 5px; }
+        input[type="text"], textarea { width: 80%; padding: 8px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px; }
+        input[type="submit"] { background-color: #4CAF50; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; }
+        input[type="submit"]:hover { background-color: #45a049; }
+      </style>
+    </head>
+    <body>
+      <h1>簡単なアンケートフォーム</h1>
+      <form method="post" action="<%= ScriptApp.getWebAppUrl() %>">
+        <label for="name">お名前:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="q1">質問1: この授業は分かりやすかったですか？</label>
+        <input type="text" id="q1" name="q1" required>
+
+        <label for="q2">質問2: 今後、どのような内容を学びたいですか？</label>
+        <textarea id="q2" name="q2" rows="4" required></textarea>
+
+        <input type="submit" value="回答を送信">
+      </form>
+    </body>
+    </html>
+  \`);
+  return htmlOutput;
+}
+
+// アンケートフォームの送信データを処理する関数
+function doPost(e) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('アンケート回答');
+  const timestamp = new Date();
+  const name = e.parameter.name;
+  const q1 = e.parameter.q1;
+  const q2 = e.parameter.q2;
+
+  sheet.appendRow([timestamp, name, q1, q2]);
+
+  return HtmlService.createHtmlOutput('<h1>回答ありがとうございました！</h1><p>ご協力に感謝いたします。</p>');
+}</code></pre>
+
+                    <h4>3. Webアプリとして公開</h4>
+                    <p>第3章の手順に従って、このGASプロジェクトをWebアプリとして公開します。</p>
+
+                    <h4>4. 動作確認</h4>
+                    <p>公開されたURLにアクセスし、フォームに回答を送信してみてください。スプレッドシートにデータが追加されることを確認します。</p>
+
+                    <h3>例2: 出欠連絡フォーム</h3>
+                    <p>生徒が欠席・遅刻・早退の連絡を簡単に行えるWebフォームを作成します。連絡内容はスプレッドシートに記録され、必要に応じてメール通知も可能です。</p>
+
+                    <h4>1. スプレッドシートの準備</h4>
+                    <p>新しいGoogle スプレッドシートを作成し、シート名を「出欠連絡」とし、1行目に以下の見出しを入力しておきます。</p>
+                    <p><code>タイムスタンプ, クラス, 氏名, 連絡種別, 理由, 連絡者</code></p>
+
+                    <h4>2. GASコードの記述</h4>
+                    <p>出欠連絡フォームも同様に作成できます。アンケートフォームのコードを参考に、必要な入力項目を追加してください。</p>
+
+                    <h4>3. Webアプリとして公開</h4>
+                    <p>第3章の手順に従って、このGASプロジェクトをWebアプリとして公開します。</p>
+
+                    <h4>4. 動作確認</h4>
+                    <p>公開されたURLにアクセスし、フォームに情報を送信してみてください。スプレッドシートにデータが追加されることを確認します。</p>
+                `
+            },
+            
+            appendix: {
+                title: '付録',
+                content: `
+                    <h2>付録</h2>
+                    <h3>よくあるエラーと解決法</h3>
+                    <p>GASでの開発中に遭遇しやすいエラーとその解決策をまとめました。</p>
+                    <ul>
+                        <li><strong>「スクリプトの実行が完了しませんでした。」</strong>: コードに文法エラーがあるか、無限ループに陥っている可能性があります。スクリプトエディタのログを確認し、エラーメッセージを参考に修正してください。</li>
+                        <li><strong>「承認が必要です。」</strong>: スプレッドシートへのアクセスなど、GASがGoogleサービスにアクセスするために必要な権限が許可されていません。初回実行時に表示される承認画面で許可してください。</li>
+                        <li><strong>「指定されたシートが見つかりません。」</strong>: <code>getSheetByName()</code> で指定したシート名が間違っている可能性があります。スプレッドシートのシート名とコードの記述が一致しているか確認してください。</li>
+                        <li><strong>「サービス SpreadsheetApp が見つかりません。」</strong>: GASプロジェクトがスプレッドシートにバインドされていないか、<code>SpreadsheetApp</code> サービスが有効になっていない可能性があります。</li>
+                    </ul>
+
+                    <h3>AIに質問するコツ</h3>
+                    <p>Geminiのような生成AIは、GASのコード作成やデバッグに非常に役立ちます。効果的に質問するためのコツを紹介します。</p>
+                    <ul>
+                        <li><strong>具体的な質問をする:</strong> 「GASでWebアプリを作りたい」だけでなく、「GASでスプレッドシートのデータを表示するWebアプリを作りたい」のように具体的に質問しましょう。</li>
+                        <li><strong>エラーメッセージをそのまま貼り付ける:</strong> エラーが発生した場合は、エラーメッセージを正確にAIに伝えると、的確なアドバイスが得られます。</li>
+                        <li><strong>目的と現状を明確にする:</strong> 「何をしたいのか」「どこまでできているのか」「何がうまくいかないのか」を明確に伝えましょう。</li>
+                        <li><strong>サンプルコードを提供する:</strong> 既存のコードがある場合は、それをAIに提供することで、より適切な修正案や改善案を提案してもらえます。</li>
+                    </ul>
+
+                    <h3>セキュリティの注意事項</h3>
+                    <p>Webアプリを公開する際には、セキュリティに十分注意してください。</p>
+                    <ul>
+                        <li><strong>機密情報の扱いに注意:</strong> パスワードや個人情報などの機密情報をコードに直接記述しないでください。</li>
+                        <li><strong>入力値の検証:</strong> ユーザーからの入力値は、必ず検証（バリデーション）を行ってください。悪意のある入力によって、予期せぬ動作やセキュリティ上の問題が発生する可能性があります。</li>
+                        <li><strong>アクセス権限の最小化:</strong> Webアプリのアクセス権限は、必要最小限に設定してください。</li>
+                    </ul>
+                `
+            }
+        };
+
+        // コンテンツを表示する関数
+        function showContent(section) {
+            const content = contentData[section];
+            if (content) {
+                document.getElementById('content').innerHTML = content.content;
+                
+                // アクティブなリンクを更新
+                const links = document.querySelectorAll('.sidebar a');
+                links.forEach(link => link.classList.remove('active'));
+                
+                const activeLink = document.querySelector(`a[onclick="showContent('${section}')"]`);
+                if (activeLink) {
+                    activeLink.classList.add('active');
+                }
+                
+                // URLのハッシュを更新
+                if (section !== 'home') {
+                    window.location.hash = section;
+                } else {
+                    window.location.hash = '';
+                }
+            }
+        }
+
+        // ページ読み込み時に初期コンテンツを表示
+        window.addEventListener('load', function() {
+            const hash = window.location.hash.replace('#', '');
+            if (hash && contentData[hash]) {
+                showContent(hash);
+            } else {
+                showContent('home');
+            }
+        });
+
+        // ブラウザの戻る/進むボタンに対応
+        window.addEventListener('hashchange', function() {
+            const hash = window.location.hash.replace('#', '');
+            if (hash && contentData[hash]) {
+                showContent(hash);
+            } else {
+                showContent('home');
+            }
+        });
+    </script>
+</body>
+</html> 
