@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GASで作るWebアプリ開発入門</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         /* リセットCSS */
         * {
@@ -13,9 +15,35 @@
         }
 
         body {
-            font-family: 'Hiragino Kaku Gothic ProN', 'メイリオ', sans-serif;
+            font-family: 'Inter', 'Hiragino Kaku Gothic ProN', 'メイリオ', sans-serif;
             line-height: 1.6;
             color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* アニメーションキーフレーム */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(0); }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
 
         /* レイアウト */
@@ -23,30 +51,84 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            animation: fadeIn 0.8s ease-out;
         }
 
         .header {
-            background-color: #4285f4;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 1rem;
+            padding: 2rem;
             text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { left: -100%; }
+            100% { left: 100%; }
         }
 
         .header h1 {
-            font-size: 1.8rem;
-            font-weight: bold;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            animation: bounce 2s infinite;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            font-weight: 300;
+            opacity: 0.9;
+            animation: fadeIn 1s ease-out 0.5s both;
         }
 
         .main-container {
             display: flex;
             flex: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            gap: 2rem;
+            padding: 2rem;
         }
 
         .sidebar {
-            width: 250px;
-            background-color: #f1f1f1;
-            padding: 1rem;
-            border-right: 1px solid #ddd;
+            width: 320px;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            animation: slideIn 0.6s ease-out;
+            position: sticky;
+            top: 2rem;
+            height: fit-content;
+        }
+
+        .sidebar h3 {
+            color: #667eea;
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .sidebar ul {
@@ -55,125 +137,356 @@
         }
 
         .sidebar li {
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.8rem;
         }
 
         .sidebar a {
-            display: block;
-            padding: 0.5rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 1rem 1.5rem;
             text-decoration: none;
-            color: #333;
-            border-radius: 4px;
-            transition: background-color 0.3s;
+            color: #555;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            background: rgba(255,255,255,0.5);
+            border: 1px solid rgba(103,126,234,0.1);
         }
 
         .sidebar a:hover {
-            background-color: #ddd;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateX(5px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(103,126,234,0.3);
         }
 
         .sidebar a.active {
-            background-color: #4285f4;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            transform: scale(1.05);
+            box-shadow: 0 15px 40px rgba(103,126,234,0.4);
+            animation: pulse 2s infinite;
+        }
+
+        .sidebar a i {
+            font-size: 1.2rem;
+            width: 20px;
+            text-align: center;
         }
 
         .content {
             flex: 1;
-            padding: 2rem;
-            max-width: 800px;
-            line-height: 1.6;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            animation: fadeIn 0.8s ease-out 0.2s both;
+            line-height: 1.8;
         }
 
         .content h2 {
-            color: #4285f4;
-            border-bottom: 2px solid #4285f4;
-            padding-bottom: 0.5rem;
-            margin-bottom: 1rem;
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+            font-size: 2.2rem;
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .content h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transform: scaleX(0);
+            transform-origin: left;
+            animation: expandWidth 1s ease-out 0.5s both;
+        }
+
+        @keyframes expandWidth {
+            to { transform: scaleX(1); }
         }
 
         .content h3 {
             color: #333;
-            margin-top: 2rem;
-            margin-bottom: 1rem;
+            margin-top: 2.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.6rem;
+            font-weight: 600;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .content h3::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 5px;
+            height: 30px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 3px;
         }
 
         .content h4 {
             color: #666;
-            margin-top: 1.5rem;
-            margin-bottom: 0.5rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .content h4::before {
+            content: '▶';
+            color: #667eea;
+            font-size: 0.8rem;
         }
 
         .content p {
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            color: #555;
+            font-size: 1.1rem;
         }
 
         .content ul, .content ol {
             padding-left: 2rem;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         .content li {
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.8rem;
+            color: #555;
+            font-size: 1.1rem;
+            position: relative;
+        }
+
+        .content ul li::before {
+            content: '●';
+            color: #667eea;
+            position: absolute;
+            left: -1.5rem;
         }
 
         .content pre {
-            background-color: #f5f5f5;
-            padding: 1rem;
-            border-radius: 4px;
+            background: linear-gradient(135deg, #2d3748, #1a202c);
+            color: #e2e8f0;
+            padding: 2rem;
+            border-radius: 15px;
             overflow-x: auto;
-            border-left: 4px solid #4285f4;
-            margin-bottom: 1rem;
+            border-left: 5px solid #667eea;
+            margin: 2rem 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        .content pre::before {
+            content: 'Code';
+            position: absolute;
+            top: 0.5rem;
+            right: 1rem;
+            background: #667eea;
+            color: white;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
         }
 
         .content code {
-            background-color: #f5f5f5;
-            padding: 2px 4px;
-            border-radius: 3px;
+            background: linear-gradient(135deg, #f7fafc, #edf2f7);
+            color: #667eea;
+            padding: 0.3rem 0.6rem;
+            border-radius: 8px;
             font-family: 'Courier New', monospace;
+            font-weight: 500;
+            border: 1px solid rgba(103,126,234,0.2);
         }
 
         .content pre code {
-            background-color: transparent;
+            background: transparent;
+            color: #e2e8f0;
             padding: 0;
+            border: none;
         }
 
         .content img {
             max-width: 100%;
             height: auto;
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin: 1rem 0;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            margin: 2rem 0;
+            transition: transform 0.3s ease;
+        }
+
+        .content img:hover {
+            transform: scale(1.05);
         }
 
         .content a {
-            color: #4285f4;
+            color: #667eea;
             text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .content a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+        }
+
+        .content a:hover::after {
+            width: 100%;
         }
 
         .content a:hover {
-            text-decoration: underline;
+            color: #764ba2;
         }
 
         .footer {
-            background-color: #333;
+            background: linear-gradient(135deg, #2d3748, #1a202c);
             color: white;
-            padding: 1rem;
+            padding: 2rem;
             text-align: center;
+            margin-top: 2rem;
+            border-radius: 20px 20px 0 0;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.1);
+        }
+
+        .footer p {
+            font-size: 1.1rem;
+            font-weight: 300;
+            opacity: 0.9;
+        }
+
+        /* 特別な装飾要素 */
+        .welcome-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(103,126,234,0.3);
+        }
+
+        .welcome-card h2 {
+            color: white;
+            border: none;
+            margin-bottom: 1rem;
+            font-size: 2.5rem;
+        }
+
+        .welcome-card h2::after {
+            display: none;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .feature-card {
+            background: rgba(255,255,255,0.8);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            border: 1px solid rgba(103,126,234,0.1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .feature-card i {
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            margin: 1rem 0;
+            color: #333;
+            font-size: 1.4rem;
+        }
+
+        .feature-card h3::before {
+            display: none;
         }
 
         /* レスポンシブデザイン */
         @media (max-width: 768px) {
             .main-container {
                 flex-direction: column;
+                padding: 1rem;
+                gap: 1rem;
             }
             
             .sidebar {
                 width: 100%;
                 order: 2;
+                position: static;
             }
             
             .content {
                 order: 1;
-                padding: 1rem;
+                padding: 2rem;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .content h2 {
+                font-size: 1.8rem;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 1.5rem;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .content {
+                padding: 1.5rem;
+            }
+
+            .welcome-card {
+                padding: 2rem;
+            }
+
+            .welcome-card h2 {
+                font-size: 2rem;
             }
         }
     </style>
@@ -181,21 +494,39 @@
 <body>
     <div class="app-container">
         <header class="header">
-            <h1>GASで作るWebアプリ開発入門</h1>
+            <h1><i class="fas fa-rocket"></i> GASで作るWebアプリ開発入門</h1>
+            <p>Google Apps Scriptでモダンなウェブアプリケーションを作ろう！</p>
         </header>
         
         <div class="main-container">
             <aside class="sidebar">
+                <h3><i class="fas fa-list"></i> 目次</h3>
                 <nav>
                     <ul>
-                        <li><a href="#" onclick="showContent('home')" class="active">トップページ</a></li>
-                        <li><a href="#chapter1" onclick="showContent('chapter1')">第1章: はじめの一歩</a></li>
-                        <li><a href="#chapter2" onclick="showContent('chapter2')">第2章: GASのキホン</a></li>
-                        <li><a href="#chapter3" onclick="showContent('chapter3')">第3章: はじめてのWebアプリ</a></li>
-                        <li><a href="#chapter4" onclick="showContent('chapter4')">第4章: 見た目を整えよう</a></li>
-                        <li><a href="#chapter5" onclick="showContent('chapter5')">第5章: データをやり取りする</a></li>
-                        <li><a href="#chapter6" onclick="showContent('chapter6')">第6章: 実践！アプリ開発</a></li>
-                        <li><a href="#appendix" onclick="showContent('appendix')">付録</a></li>
+                        <li><a href="#" onclick="showContent('home')" class="active">
+                            <i class="fas fa-home"></i> トップページ
+                        </a></li>
+                        <li><a href="#chapter1" onclick="showContent('chapter1')">
+                            <i class="fas fa-play"></i> 第1章: はじめの一歩
+                        </a></li>
+                        <li><a href="#chapter2" onclick="showContent('chapter2')">
+                            <i class="fas fa-code"></i> 第2章: GASのキホン
+                        </a></li>
+                        <li><a href="#chapter3" onclick="showContent('chapter3')">
+                            <i class="fas fa-globe"></i> 第3章: はじめてのWebアプリ
+                        </a></li>
+                        <li><a href="#chapter4" onclick="showContent('chapter4')">
+                            <i class="fas fa-paint-brush"></i> 第4章: 見た目を整えよう
+                        </a></li>
+                        <li><a href="#chapter5" onclick="showContent('chapter5')">
+                            <i class="fas fa-exchange-alt"></i> 第5章: データをやり取りする
+                        </a></li>
+                        <li><a href="#chapter6" onclick="showContent('chapter6')">
+                            <i class="fas fa-tools"></i> 第6章: 実践！アプリ開発
+                        </a></li>
+                        <li><a href="#appendix" onclick="showContent('appendix')">
+                            <i class="fas fa-book"></i> 付録
+                        </a></li>
                     </ul>
                 </nav>
             </aside>
@@ -206,7 +537,7 @@
         </div>
         
         <footer class="footer">
-            <p>&copy; 2024 GASで作るWebアプリ開発入門</p>
+            <p><i class="fas fa-heart"></i> 2024 GASで作るWebアプリ開発入門 - Made with Love</p>
         </footer>
     </div>
 
@@ -216,16 +547,36 @@
             home: {
                 title: 'サイトへようこそ！',
                 content: `
-                    <h2>サイトへようこそ！</h2>
-                    <p>このサイトでは、Google Apps Script (GAS) を使ったWebアプリケーションの作り方を、初心者向けに分かりやすく解説します。</p>
-                    <p>プログラミングが初めての方でも大丈夫。一緒に学んでいきましょう！</p>
+                    <div class="welcome-card">
+                        <h2><i class="fas fa-star"></i> サイトへようこそ！</h2>
+                        <p>このサイトでは、Google Apps Script (GAS) を使ったWebアプリケーションの作り方を、初心者向けに分かりやすく解説します。</p>
+                        <p>プログラミングが初めての方でも大丈夫。一緒に学んでいきましょう！</p>
+                    </div>
+                    
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <i class="fas fa-graduation-cap"></i>
+                            <h3>初心者フレンドリー</h3>
+                            <p>プログラミング経験がなくても大丈夫！基礎から丁寧に説明します。</p>
+                        </div>
+                        <div class="feature-card">
+                            <i class="fas fa-rocket"></i>
+                            <h3>実践的な内容</h3>
+                            <p>実際に動くWebアプリを作りながら学習できます。</p>
+                        </div>
+                        <div class="feature-card">
+                            <i class="fas fa-free-code-camp"></i>
+                            <h3>無料で学習</h3>
+                            <p>Google Apps Scriptは無料で使えるので、追加コストはありません。</p>
+                        </div>
+                    </div>
                 `
             },
             
             chapter1: {
                 title: '第1章: はじめの一歩',
                 content: `
-                    <h2>第1章: はじめの一歩</h2>
+                    <h2><i class="fas fa-play"></i> 第1章: はじめの一歩</h2>
                     <h3>GASで何ができる？</h3>
                     <p>Google Apps Script (GAS) は、Googleが提供するJavaScriptベースのプログラミング言語です。Google Workspace（旧G Suite）の様々なサービス（Google スプレッドシート、Google ドキュメント、Google フォーム、Gmailなど）を連携させ、自動化したり、機能を拡張したりすることができます。</p>
                     <p>例えば、以下のようなことができます。</p>
@@ -254,7 +605,7 @@
             chapter2: {
                 title: '第2章: GASのキホン',
                 content: `
-                    <h2>第2章: GASのキホン</h2>
+                    <h2><i class="fas fa-code"></i> 第2章: GASのキホン</h2>
                     <h3>スクリプトエディタの使い方</h3>
                     <p>GASのコードを書く場所を「スクリプトエディタ」と呼びます。Google Driveから新しいGASプロジェクトを作成すると、自動的にスクリプトエディタが開きます。</p>
                     <p>スクリプトエディタは、大きく分けて以下の部分で構成されています。</p>
@@ -298,7 +649,7 @@
             chapter3: {
                 title: '第3章: はじめてのWebアプリ',
                 content: `
-                    <h2>第3章: はじめてのWebアプリ</h2>
+                    <h2><i class="fas fa-globe"></i> 第3章: はじめてのWebアプリ</h2>
                     <h3>「こんにちは世界！」と表示するだけの最も簡単なWebページ</h3>
                     <p>GASを使ってWebアプリを作成する最初のステップとして、ブラウザに「こんにちは世界！」と表示するだけのシンプルなWebページを作成してみましょう。</p>
 
@@ -341,7 +692,7 @@
             chapter4: {
                 title: '第4章: 見た目を整えよう',
                 content: `
-                    <h2>第4章: 見た目を整えよう (HTML & CSS)</h2>
+                    <h2><i class="fas fa-paint-brush"></i> 第4章: 見た目を整えよう (HTML & CSS)</h2>
                     <p>Webアプリの見た目を整えるには、HTMLとCSSを使います。HTMLはページの構造を作り、CSSは色や配置などのスタイルを定義します。</p>
 
                     <h3>最低限知っておきたいHTMLタグ</h3>
@@ -390,7 +741,7 @@
             chapter5: {
                 title: '第5章: データをやり取りする',
                 content: `
-                    <h2>第5章: データをやり取りする</h2>
+                    <h2><i class="fas fa-exchange-alt"></i> 第5章: データをやり取りする</h2>
                     <p>Webアプリの重要な機能の一つは、ユーザーからの入力を受け取ったり、サーバーからデータを取得したりすることです。GASのWebアプリでは、HTMLフォームとGASのスクリプトを連携させることで、データのやり取りを実現します。</p>
 
                     <h3>フォームを作ってGASにデータを送る</h3>
@@ -453,7 +804,7 @@ function doPost(e) {
             chapter6: {
                 title: '第6章: 実践！アプリ開発',
                 content: `
-                    <h2>第6章: 実践！アプリ開発チュートリアル</h2>
+                    <h2><i class="fas fa-tools"></i> 第6章: 実践！アプリ開発チュートリアル</h2>
                     <p>これまでの章で学んだ知識を活かして、実際にWebアプリを作成してみましょう。ここでは、教育現場で役立つ2つの簡単なWebアプリの作成手順を解説します。</p>
 
                     <h3>例1: 簡単なアンケートフォーム</h3>
